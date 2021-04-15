@@ -1,0 +1,8 @@
+[{
+    "Idparametro" : "PK*  int  Tamanho:36 Preenchimento: Obrigatório",
+    "Idgrupo" : "Entidade Tamanho:36 Preenchimento: Obrigatório",
+    "Chave" : "String Tamanho:30 Preenchimento: Obrigatório",
+    "Valor" : "String Tamanho:30 Preenchimento: Obrigatório",
+    "Validode" : "DateTime Preenchimento: Opcional",
+    "Validoate" : "DateTime Preenchimento: Opcional",
+}]

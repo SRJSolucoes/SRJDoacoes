@@ -1,0 +1,17 @@
+[{
+    "Idvenda" : "PK*  int  Tamanho:36 Preenchimento: Obrigatório",
+    "Idcaixa" : "Entidade Tamanho:46 Preenchimento: Obrigatório",
+    "Idparametro" : "Entidade Tamanho:36 Preenchimento: Obrigatório",
+    "Cpf" : "String Tamanho:20 Preenchimento: Opcional",
+    "Nome" : "String Tamanho:50 Preenchimento: Opcional",
+    "Datahota" : "DateTime Preenchimento: Obrigatório",
+    "Valortotaldadoacao" : "Decimal Tamanho:8 Preenchimento: Obrigatório",
+    "Valorretidoloja" : "Decimal Tamanho:8 Preenchimento: Obrigatório",
+    "Enviodigital" : "Char Tamanho:1 Preenchimento: Opcional",
+    "Datadeenvio" : "DateTime Preenchimento: Opcional",
+    "Enviofinanceiro" : "Char Tamanho:1 Preenchimento: Opcional",
+    "Datadeenviofinanceiro" : "DateTime Preenchimento: Opcional",
+    "Consolidado" : "Char Tamanho:1 Preenchimento: Opcional",
+    "Datadeconsolidacao" : "DateTime Preenchimento: Opcional",
+    "Reciboemitido" : "Char Tamanho:1 Preenchimento: Opcional",
+}]

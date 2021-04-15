@@ -1,0 +1,6 @@
+[{
+    "Idcaixa" : "PK*  int  Tamanho:46 Preenchimento: Obrigatório",
+    "Idloja" : "Entidade Tamanho:36 Preenchimento: Obrigatório",
+    "Codigo" : "String Tamanho:50 Preenchimento: Obrigatório",
+    "Descrição" : "String Tamanho:50 Preenchimento: Opcional",
+}]

@@ -1,0 +1,6 @@
+[{
+    "Idcontrole" : "PK*  int  Tamanho:36 Preenchimento: Opcional",
+    "Idvenda" : "Entidade Tamanho:36 Preenchimento: Obrigatório",
+    "Consolidado" : "Char Tamanho:1 Preenchimento: Opcional",
+    "Dataconsolidacao" : "DateTime Preenchimento: Opcional",
+}]

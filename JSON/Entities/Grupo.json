@@ -1,0 +1,6 @@
+[{
+    "Idgrupo" : "PK*  int  Tamanho:36 Preenchimento: Obrigatório",
+    "Nome" : "String Tamanho:50 Preenchimento: Obrigatório",
+    "Responsável" : "String Tamanho:50 Preenchimento: Obrigatório",
+    "Logo" : "byte[] Tamanho:0 Preenchimento: Opcional",
+}]
