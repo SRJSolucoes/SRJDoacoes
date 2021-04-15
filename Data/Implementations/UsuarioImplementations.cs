@@ -17,12 +17,12 @@ namespace Data.Implementations
 {
     public class UsuarioImplementations : RepositoryBase<Usuario>, IUsuarioRepository
     {
-        private readonly ISession _session;
+        private readonly Func<string, ISession> _session;
 
         private readonly IPasswordHasher _passwordHasher;
         private readonly ICurrentUserAccessor _currentUserAccessor;
 
-        public UsuarioImplementations(ISession _session, IPasswordHasher _passwordHasher, ICurrentUserAccessor _currentUserAccessor) : base(_session, _currentUserAccessor)
+        public UsuarioImplementations(Func<string, ISession> _session, IPasswordHasher _passwordHasher, ICurrentUserAccessor _currentUserAccessor) : base(_session, _currentUserAccessor)
         {
             this._session = _session;
             this._passwordHasher = _passwordHasher;
@@ -31,7 +31,7 @@ namespace Data.Implementations
 
         public async Task<Usuario> FindByLogin(Guid Idparceiro, string email, string senha)
         {
-            var _usuario = await _session.Query<Usuario>().FirstOrDefaultAsync(u => u.Fkparceiro.Equals(Idparceiro) && u.Email.Equals(email) && u.Ativo.Equals('A'));
+            var _usuario = await _session("Acesso").Query<Usuario>().FirstOrDefaultAsync(u => u.Fkparceiro.Equals(Idparceiro) && u.Email.Equals(email) && u.Ativo.Equals('A'));
             if (_usuario is null)
             {
                 var _usuarioMock = new UsuarioO2SiMock().usuarios.FirstOrDefault(u => u.Email.Equals(email) && u.Senha.Equals(senha));
@@ -58,7 +58,7 @@ namespace Data.Implementations
 
         public async Task<Usuario> FindtoChangePassword(Guid Idusuario)
         {
-            return await _session.Query<Usuario>().FirstOrDefaultAsync(u => u.Idusuario.Equals(Idusuario));
+            return await _session("Acesso").Query<Usuario>().FirstOrDefaultAsync(u => u.Idusuario.Equals(Idusuario));
 
         }
     }

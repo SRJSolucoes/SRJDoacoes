@@ -15,6 +15,7 @@ namespace Domain.DTOs.GrupoDTO {
         [StringLength(50, ErrorMessageResourceName = "Campo com tamanho excedido. Máximo permitido: 50 posições.", ErrorMessageResourceType = typeof(EntitiesResources))]
         public String Responsável { get; set; }
  
+//        [StringLength(0, ErrorMessageResourceName = "Campo com tamanho excedido. Máximo permitido: 0 posições.", ErrorMessageResourceType = typeof(EntitiesResources))]
         public String Logo { get; set; }
  
     }

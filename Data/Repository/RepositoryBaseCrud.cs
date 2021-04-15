@@ -1,5 +1,4 @@
 ﻿using AcessoWebApi.Infrastructure.Security;
-using Data.Interfaces;
 using Domain.Entidades;
 using Domain.Enum;
 using Domain.Enum.Core;
@@ -17,15 +16,16 @@ namespace Data.Repository
 {
     public class RepositoryBaseCrud<T> : IRepositoryCrud<T> where T : EntidadeBase
     {
-        private readonly ISessionCRUD _sessionCRUD;
+        private readonly Func<string, ISession> _sessionCRUD;
+
         private readonly ICurrentUserAccessor _currentUserAccessor;
 
-        public RepositoryBaseCrud(ISessionCRUD _sessionCRUD,
+        public RepositoryBaseCrud(Func<string, ISession> _sessionCRUD,
                                   ICurrentUserAccessor _currentUserAccessor)
         {
-            if (!_sessionCRUD.IsOpen)
+            if (!_sessionCRUD("CRUD").IsOpen)
             {
-              _sessionCRUD.SessionFactory.OpenSession();
+              _sessionCRUD("CRUD").SessionFactory.OpenSession();
             }
 
             this._sessionCRUD = _sessionCRUD;
@@ -34,7 +34,7 @@ namespace Data.Repository
 
         public async Task<T> InsertAsync(T item)
         {
-            using (var transaction = _sessionCRUD.BeginTransaction())
+            using (var transaction = _sessionCRUD("CRUD").BeginTransaction())
             {
                 try
                 {
@@ -54,7 +54,7 @@ namespace Data.Repository
                         item.Fkparceiro = _currentUserAccessor.GetCurrentUser().Idparceiro;
                     }
 
-                    await _sessionCRUD.SaveAsync(item);
+                    await _sessionCRUD("CRUD").SaveAsync(item);
                     transaction.Commit();
                 }
                 catch (Exception ex)
@@ -68,11 +68,11 @@ namespace Data.Repository
 
         public async Task<T> UpdateAsync(T item, Guid id)
         {
-            using (var transaction = _sessionCRUD.BeginTransaction())
+            using (var transaction = _sessionCRUD("CRUD").BeginTransaction())
             {
                 try
                 {
-                    var _itemCadastrado = await _sessionCRUD.GetAsync<T>(id);
+                    var _itemCadastrado = await _sessionCRUD("CRUD").GetAsync<T>(id);
                     if (_itemCadastrado == null)
                         return null;
                     else
@@ -87,8 +87,8 @@ namespace Data.Repository
                         if (item.Usuariodealteracao == null)
                             item.Usuariodealteracao = _currentUserAccessor.GetCurrentUser().Idusuario;
 
-                        await _sessionCRUD.MergeAsync(item);
-                        await _sessionCRUD.FlushAsync();
+                        await _sessionCRUD("CRUD").MergeAsync(item);
+                        await _sessionCRUD("CRUD").FlushAsync();
                         transaction.Commit();
                     }
                 }
@@ -103,11 +103,11 @@ namespace Data.Repository
 
         public async Task<bool> DeleteAsync(Guid id)
         {
-            using (var transaction = _sessionCRUD.BeginTransaction())
+            using (var transaction = _sessionCRUD("CRUD").BeginTransaction())
             {
                 try
                 {
-                    var result = await _sessionCRUD.GetAsync<T>(id);
+                    var result = await _sessionCRUD("CRUD").GetAsync<T>(id);
                     if (result == null)
                         return false;
                     else
@@ -117,7 +117,7 @@ namespace Data.Repository
                         result.Datadeinativacao = DateTime.UtcNow;
                         result.Usuariodeinativacao = _currentUserAccessor.GetCurrentUser().Idusuario;
 
-                        await _sessionCRUD.UpdateAsync(result);
+                        await _sessionCRUD("CRUD").UpdateAsync(result);
 
                         transaction.Commit();
                         return true;
@@ -134,17 +134,17 @@ namespace Data.Repository
 
         public async Task<bool> DeleteAdminAsync(Guid id)
         {
-            using (var transaction = _sessionCRUD.BeginTransaction())
+            using (var transaction = _sessionCRUD("CRUD").BeginTransaction())
             {
                 try
                 {
-                    var result = await _sessionCRUD.GetAsync<T>(id);
+                    var result = await _sessionCRUD("CRUD").GetAsync<T>(id);
                     if (result == null)
                         return false;
                     else
                     {
 
-                        await _sessionCRUD.DeleteAsync(result);
+                        await _sessionCRUD("CRUD").DeleteAsync(result);
 
                         transaction.Commit();
                         return true;
@@ -162,7 +162,7 @@ namespace Data.Repository
         public async Task<bool> ExistsAsync(Guid id)
         {
 
-            var result = await _sessionCRUD.GetAsync<T>(id);
+            var result = await _sessionCRUD("CRUD").GetAsync<T>(id);
             if (result == null)
                 return false;
             else
@@ -173,7 +173,7 @@ namespace Data.Repository
         {
             try
             {
-                var result = await _sessionCRUD.GetAsync<T>(id);
+                var result = await _sessionCRUD("CRUD").GetAsync<T>(id);
                 if (result != null)
                     return result.Ativo.Equals('A') ? result : null;
                 else
@@ -191,7 +191,7 @@ namespace Data.Repository
             try
             {
                 var _idparceiro = _currentUserAccessor.GetCurrentUser().Idparceiro;
-                return await (from e in _sessionCRUD.Query<T>() select e).Where(e => e.Fkparceiro.Equals(_idparceiro) && e.Ativo.Equals('A')).ToListAsync();
+                return await (from e in _sessionCRUD("CRUD").Query<T>() select e).Where(e => e.Fkparceiro.Equals(_idparceiro) && e.Ativo.Equals('A')).ToListAsync();
             }
             catch (Exception ex)
             {
@@ -202,7 +202,7 @@ namespace Data.Repository
         public async Task<IEnumerable<T>> GetInatives()
         {
             var Idparceiro = _currentUserAccessor.GetCurrentParcID();
-            return await _sessionCRUD.Query<T>().Where(u => u.Fkparceiro.Equals(Idparceiro) && u.Ativo.Equals('I')).ToListAsync();
+            return await _sessionCRUD("CRUD").Query<T>().Where(u => u.Fkparceiro.Equals(Idparceiro) && u.Ativo.Equals('I')).ToListAsync();
         }
 
         public IQueryable<T> QuerySelect()
@@ -210,7 +210,7 @@ namespace Data.Repository
             try
             {
                 var _idparceiro = _currentUserAccessor.GetCurrentUser().Idparceiro;
-                return _sessionCRUD.Query<T>().Where(e => e.Fkparceiro.Equals(_idparceiro) && e.Ativo.Equals('A'));
+                return _sessionCRUD("CRUD").Query<T>().Where(e => e.Fkparceiro.Equals(_idparceiro) && e.Ativo.Equals('A'));
             }
             catch (Exception ex)
             {
@@ -220,7 +220,8 @@ namespace Data.Repository
 
         public void Dispose()
         {
-            if (_sessionCRUD.Transaction.WasCommitted) _sessionCRUD.Transaction.Dispose();
+            if (_sessionCRUD("CRUD").Transaction.WasCommitted) _sessionCRUD("CRUD").Transaction.Dispose();
+            if (_sessionCRUD("CRUD").Transaction.WasCommitted) _sessionCRUD("CRUD").Transaction.Dispose();
         }
     }
 }

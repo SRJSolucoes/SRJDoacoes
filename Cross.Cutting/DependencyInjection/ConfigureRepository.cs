@@ -1,12 +1,14 @@
 ﻿using Data.FluentySession;
 using Data.Implementations;
-using Data.Interfaces;
 using Data.Mapping;
 using Data.Repository;
 using Domain.Interfaces;
 using Domain.Repository;
 using Microsoft.Extensions.DependencyInjection;
 using NHibernate;
+using Renci.SshNet.Security;
+using System;
+using System.Collections.Generic;
 
 namespace Cross.Cutting.DependencyInjection
 {
@@ -21,25 +23,30 @@ namespace Cross.Cutting.DependencyInjection
             serviceCollection.AddScoped<IUsuarioRepository, UsuarioImplementations>();
             serviceCollection.AddScoped<IFluentySessionFactory, FluentySessionFactory<UsuarioMap>>();
 
-
-            serviceCollection.AddScoped<ISessionFactory>(factory =>
+            serviceCollection.AddScoped<Func<string, NHibernate.ISession>>(session => key =>
             {
-                return SessionFact.GetSessionFact();
+                switch (key)
+                {
+                    case "Acesso":
+                        return new SessionFactory().GetCurrentSession();
+                    case "CRUD":
+                        return new SessionFactory().GetCurrentSessionCRUD();
+                    default:
+                        throw new KeyNotFoundException();
+                }
             });
 
-            serviceCollection.AddScoped<ISessionFactoryCRUD>(factory =>
+            serviceCollection.AddScoped<Func<string, ISessionFactory>>(factory => key =>
             {
-                return (ISessionFactoryCRUD) SessionFact.GetSessionFactCRUD();
-            });
-
-            serviceCollection.AddScoped<ISession>(session =>
-            {
-              return new SessionFactory().GetCurrentSession();
-            });
-
-            serviceCollection.AddScoped<ISessionCRUD>(sessioncrud =>
-            {
-                return (ISessionCRUD) new SessionFactoryCRUD().GetCurrentSessionCRUD(); ; 
+                switch (key)
+                {
+                    case "Acesso":
+                        return SessionFact.GetSessionFact();
+                    case "CRUD":
+                        return SessionFact.GetSessionFactCRUD();
+                    default:
+                        throw new KeyNotFoundException();
+                }
             });
         }
     }
