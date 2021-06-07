@@ -21,7 +21,8 @@ namespace Cross.Cutting.DependencyInjection
             serviceCollection.AddScoped(typeof(IRepositoryCrud<>), typeof(RepositoryBaseCrud<>));
 
             serviceCollection.AddScoped<IUsuarioRepository, UsuarioImplementations>();
-            serviceCollection.AddScoped<IFluentySessionFactory, FluentySessionFactory<UsuarioMap>>();
+            serviceCollection.AddScoped<IFluentySessionFactory, FluentySessionFactory<GrupoMap>>();
+
 
             serviceCollection.AddScoped<Func<string, NHibernate.ISession>>(session => key =>
             {

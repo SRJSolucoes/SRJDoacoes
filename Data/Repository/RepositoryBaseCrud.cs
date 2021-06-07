@@ -221,7 +221,6 @@ namespace Data.Repository
         public void Dispose()
         {
             if (_sessionCRUD("CRUD").Transaction.WasCommitted) _sessionCRUD("CRUD").Transaction.Dispose();
-            if (_sessionCRUD("CRUD").Transaction.WasCommitted) _sessionCRUD("CRUD").Transaction.Dispose();
         }
     }
 }

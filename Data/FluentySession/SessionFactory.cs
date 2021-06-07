@@ -19,13 +19,14 @@ namespace Data.FluentySession
 
             //if (CurrentSessionContext.HasBind(sessionFactory))
             //{
-            //    currentSession =sessionFactory.GetCurrentSession();
+            //    currentSession = sessionFactory.GetCurrentSession();
             //}
             //else
             //{
-            //    currentSession =sessionFactory.OpenSession();
+            //    currentSession = sessionFactory.OpenSession();
             //    CurrentSessionContext.Bind(currentSession);
             //}
+
             return currentSession;
         }
 
@@ -34,6 +35,17 @@ namespace Data.FluentySession
             ISession currentSession;
             var sessionFactory = SessionFact.GetSessionFactCRUD();
             currentSession = sessionFactory.OpenSession();
+
+            //if (CurrentSessionContext.HasBind(sessionFactory))
+            //{
+            //    currentSession = sessionFactory.GetCurrentSession();
+            //}
+            //else
+            //{
+            //    currentSession = sessionFactory.OpenSession();
+            //    CurrentSessionContext.Bind(currentSession);
+            //}
+
             return currentSession;
         }
 
@@ -84,8 +96,8 @@ namespace Data.FluentySession
                 }
                 finally
                 {
-                    session.Close();
-                    session.Dispose();
+                    sessionCRUD.Close();
+                    sessionCRUD.Dispose();
                 }
             }
         }

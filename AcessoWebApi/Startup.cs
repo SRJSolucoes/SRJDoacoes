@@ -22,6 +22,8 @@ namespace AcessoWebApi
     {
         public IConfiguration Configuration { get; }
 
+        readonly string MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
+
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -120,6 +122,22 @@ namespace AcessoWebApi
                     });
             });
 
+            // Instalar no IIS
+            services.Configure<IISOptions>(o =>
+            {
+                o.ForwardClientCertificate = false;
+            });
+
+            services.AddCors(options =>
+            {
+                options.AddPolicy(MyAllowSpecificOrigins, builder => builder
+                .AllowAnyMethod()
+                .AllowAnyHeader()
+                .SetIsOriginAllowed(origin => true)
+                .AllowCredentials());
+
+            });
+
             services.AddControllers()
                 .AddNewtonsoftJson();
         }
@@ -136,7 +154,7 @@ namespace AcessoWebApi
             app.UseSwaggerUI(c =>
             {
                 c.RoutePrefix = string.Empty;
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "SRJ Soluções");
+                c.SwaggerEndpoint("./swagger/v1/swagger.json", "SRJ Soluções");
             });
 
             var option = new RewriteOptions();
@@ -144,6 +162,9 @@ namespace AcessoWebApi
             app.UseRewriter(option);
 
             app.UseRouting();
+
+            app.UseCors(MyAllowSpecificOrigins);
+
             app.UseAuthorization();
             app.UseEndpoints(endpoint => { endpoint.MapControllers(); });
         }

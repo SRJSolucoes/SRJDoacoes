@@ -1,5 +1,4 @@
-﻿using Data.Interfaces;
-using NHibernate;
+﻿using NHibernate;
 using NHibernate.Context;
 using System;
 using System.Diagnostics;
@@ -8,25 +7,24 @@ namespace Data.FluentySession
 {
     public class SessionFactoryCRUD
     {
-
         public SessionFactoryCRUD()
         {
+            
         }
 
-        // TODO : TOAQUI
-        public ISession GetCurrentSessionCRUD()
+        public ISession GetCurrentSession()
         {
             ISession currentSession;
-            var sessionFactoryCRUD = SessionFact.GetSessionFactCRUD();
+            var sessionFactory = SessionFactCRUD.GetSessionFact();
+            currentSession = sessionFactory.OpenSession();
 
-            currentSession = sessionFactoryCRUD.OpenSession();
 
             return currentSession;
         }
 
         public static void DisposeCurrentSession()
         {
-            var factoryCRUD = SessionFact.GetSessionFactCRUD();
+            var factoryCRUD = SessionFactCRUD.GetSessionFact();
             var sessionCRUD = CurrentSessionContext.Unbind(factoryCRUD);
             if (sessionCRUD != null && sessionCRUD.IsOpen)
             {
