@@ -131,10 +131,12 @@ namespace AcessoWebApi
             services.AddCors(options =>
             {
                 options.AddPolicy(MyAllowSpecificOrigins, builder => builder
+                .AllowAnyOrigin()
                 .AllowAnyMethod()
                 .AllowAnyHeader()
-                .SetIsOriginAllowed(origin => true)
-                .AllowCredentials());
+                //.SetIsOriginAllowed(origin => true)
+                //.AllowCredentials()
+                );
 
             });
 
